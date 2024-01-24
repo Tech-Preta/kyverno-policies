@@ -1,0 +1,75 @@
+name: Policy Test
+
+permissions: {}
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - main
+      - release*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: policies
+      - name: Validate all policies
+        run: ./.hack/verify-files-structure.sh
+        working-directory: policies
+      - name: Clone Kyverno
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          repository: kyverno/kyverno
+          path: kyverno
+          # The target branch of a pull request or the branch/tag of a push
+          ref: ${{ github.base_ref || github.ref_name }}
+      - name: Set up Go 
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version: ~1.21.1
+      - name: Test Policy
+        run: go run ./cmd/cli/kubectl-kyverno test ../policies
+        working-directory: kyverno
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          path: policies
+      - name: Checkout Kyverno
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          repository: kyverno/kyverno
+          path: kyverno
+          # The target branch of a pull request or the branch/tag of a push
+          ref: ${{ github.base_ref || github.ref_name }}
+      - name: Set up Go 
+        uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+        with:
+          go-version: ~1.21.1
+      - name: Lint policies
+        run: |
+          set -e
+          KYVERNO_EXPERIMENTAL=true go run ./cmd/cli/kubectl-kyverno fix test . --save
+        working-directory: kyverno
+      - name: Check artifacthub-pkg digests
+        run: ./.hack/update-artifacthub-pkg.sh
+        working-directory: policies
+      - name: Check diff
+        run: |
+          set -e
+          git --no-pager diff .
+          git diff --quiet --exit-code .
+        working-directory: policies
