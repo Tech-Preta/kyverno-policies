@@ -106,7 +106,7 @@ jobs:
           release: v0.0.9
       - name: Test with Chainsaw
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.USER_TOKEN }}
         run: |
           set -e
           chainsaw test --config .chainsaw.yaml --include-test-regex '^chainsaw$/${{ matrix.tests }}' --no-color=false
