@@ -1,4 +1,5 @@
 # Kyverno Policies
+[![kyverno-policy-test](https://github.com/Tech-Preta/kyverno-policies/actions/workflows/kyverno-test-policy.yaml/badge.svg)](https://github.com/Tech-Preta/kyverno-policies/actions/workflows/kyverno-test-policy.yaml)
 
 Este repositório contém políticas (policies) para o Kyverno, uma ferramenta de política nativa do Kubernetes. O Kyverno permite definir políticas declarativas para a validação e mutação de recursos Kubernetes. As políticas aqui fornecidas visam ajudar na aplicação consistente de práticas de segurança, conformidade e melhores práticas em clusters Kubernetes.
 
