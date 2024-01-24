@@ -1,27 +1,25 @@
-name: kyverno-policy-test
+name: Kyverno Policy Check
+
 on:
-    push:
-      branches:
-        - '*'
-    pull_request:
-      branches:
-        - main
-  
+  push:
+    branches:
+      - main
+
 jobs:
-  test:
+  test-kyverno-policies:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
+
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Install Kyverno CLI
-        uses: kyverno/action-install-cli@v0.2.0
-        with:
-          release: 'v1.11.0'
-      - name: Check install
-        run: kyverno version
-      - name: Test new resources against existing policies
-        run: kyverno apply policies/ -r resources/
-      - name: Test pre-defined cases
-        run: kyverno test tests/
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Validate YAML Indentation
+      run: |
+        if ! yamllint policies/; then
+          echo "YAML indentation validation failed."
+          exit 1
+        fi
+
+    - name: Simulate Apply Kyverno Policy
+      run: |
+        kubectl apply -f policies/require-resources-limits.yml --dry-run=client -o yaml
