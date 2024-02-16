@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: trusted-pod
+spec:
+  containers:
+    - name: trusted-container
+      image: trustedrepo.com/my-image
+      resources:
+        limits:
+          cpu: "1"
+          memory: "1Gi"
