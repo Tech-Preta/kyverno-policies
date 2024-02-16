@@ -1,0 +1,7 @@
+{
+    "DockerRun.DisableDockerrc": true,
+    "DockerRun.Containers": [
+        "095adf3b0019"
+    ],
+    "terminal.integrated.automationProfile.linux": {}
+}
