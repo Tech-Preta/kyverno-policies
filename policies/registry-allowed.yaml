@@ -1,9 +1,4 @@
 apiVersion: kyverno.io/v1
-terms:
-  - name: recourse
-    apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["create"]
 kind: ClusterPolicy
 metadata:
   name: ensure-images-from-trusted-repo
