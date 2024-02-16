@@ -24,6 +24,6 @@ jobs:
           release: 'v1.11.0'
       - name: Check install
         run: kyverno version
+        
       - name: Test new resources against existing policies
-#        run: kyverno apply policies/ -r resources/
-         run: kyverno apply policies/disallow-root-user.yml --resource resources/disallow-root-user.yml
+        run: kyverno apply policies/disallow-root-user.yml --resource resources/disallow-root-user.yml
